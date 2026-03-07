@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -11,6 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Briefcase, MapPin } from 'lucide-react';
+import { jobListings } from '@/data/job-listings';
 
 const applySchema = z.object({
   name: z.string().min(2),
@@ -24,26 +23,11 @@ type ApplyData = z.infer<typeof applySchema>;
 const Careers = () => {
   const [applyingTo, setApplyingTo] = useState<string | null>(null);
   const form = useForm<ApplyData>({ resolver: zodResolver(applySchema) });
-
-  const { data: jobs, isLoading } = useQuery({
-    queryKey: ['job-listings'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('job_listings').select('*').eq('is_active', true);
-      if (error) throw error;
-      return data;
-    },
-  });
+  const jobs = jobListings.filter((job) => job.isActive);
 
   const onSubmit = async (data: ApplyData) => {
     if (!applyingTo) return;
-    const { error } = await supabase.from('job_applications').insert([{
-      name: data.name,
-      email: data.email,
-      resume_url: data.resume_url,
-      cover_letter: data.cover_letter,
-      job_id: applyingTo,
-    }]);
-    if (error) { toast.error('Failed to submit. Please try again.'); return; }
+    await new Promise((resolve) => setTimeout(resolve, 600));
     toast.success('Application submitted!');
     form.reset();
     setApplyingTo(null);
@@ -54,9 +38,7 @@ const Careers = () => {
       <h1 className="font-serif text-4xl font-bold text-foreground mb-2">Join Atelier</h1>
       <p className="text-muted-foreground mb-12">Help us bring original art to the world. Open positions below.</p>
 
-      {isLoading ? (
-        <div className="space-y-4">{[1,2,3].map(i => <div key={i} className="h-24 animate-pulse rounded-lg bg-muted" />)}</div>
-      ) : !jobs?.length ? (
+      {!jobs.length ? (
         <p className="text-muted-foreground py-12 text-center">No open positions right now. Check back soon!</p>
       ) : (
         <div className="space-y-4">
@@ -66,7 +48,7 @@ const Careers = () => {
                 <div>
                   <h2 className="font-serif text-xl font-semibold text-foreground">{job.title}</h2>
                   <div className="flex flex-wrap gap-4 mt-2 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1"><Briefcase className="h-3.5 w-3.5" />{job.department} · {job.type}</span>
+                    <span className="flex items-center gap-1"><Briefcase className="h-3.5 w-3.5" />{job.department} - {job.type}</span>
                     <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{job.location}</span>
                   </div>
                 </div>

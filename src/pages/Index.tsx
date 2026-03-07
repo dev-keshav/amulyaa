@@ -3,9 +3,10 @@ import { useState } from 'react';
 import { ArrowRight, Paintbrush, Palette, Frame, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { supabase } from '@/integrations/supabase/client';
-import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import CloudinaryImage from '@/components/media/CloudinaryImage';
+import { products } from '@/data/products';
+import { sketches as sketchPieces } from '@/data/sketches';
 
 const testimonials = [
   { name: 'Sarah M.', text: 'The painting transformed our living room. Absolutely stunning craftsmanship.', rating: 5 },
@@ -23,33 +24,16 @@ const Index = () => {
   const [email, setEmail] = useState('');
   const [subscribing, setSubscribing] = useState(false);
 
-  const { data: featured } = useQuery({
-    queryKey: ['featured-products'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('featured', true)
-        .limit(6);
-      if (error) throw error;
-      return data;
-    },
-  });
+  const featuredProducts = products.filter((product) => product.featured).slice(0, 6);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     setSubscribing(true);
-    const { error } = await supabase.from('newsletter_subscribers').insert({ email });
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    toast.success('Welcome to the Atelier family!');
+    setEmail('');
     setSubscribing(false);
-    if (error?.code === '23505') {
-      toast.info('You\'re already subscribed!');
-    } else if (error) {
-      toast.error('Something went wrong. Please try again.');
-    } else {
-      toast.success('Welcome to the Atelier family!');
-      setEmail('');
-    }
   };
 
   return (
@@ -79,18 +63,19 @@ const Index = () => {
           <p className="text-muted-foreground max-w-xl mx-auto">Curated highlights from our latest body of work.</p>
         </div>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {featured?.map((product) => (
+          {featuredProducts.map((product) => (
             <Link
               key={product.id}
               to={`/shop/${product.slug}`}
               className="group block overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg"
             >
               <div className="aspect-[4/5] overflow-hidden">
-                <img
-                  src={product.images?.[0] || 'https://images.unsplash.com/photo-1578926288207-a90a5366759d?w=600&q=80'}
+                <CloudinaryImage
+                  publicId={product.images[0]}
+                  width={600}
+                  height={750}
                   alt={product.title}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
                 />
               </div>
               <div className="p-5">
@@ -100,9 +85,7 @@ const Index = () => {
               </div>
             </Link>
           ))}
-          {!featured?.length && (
-            <p className="col-span-full text-center text-muted-foreground">Loading featured paintings…</p>
-          )}
+
         </div>
       </section>
 
@@ -124,6 +107,49 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Sketch Gallery */}
+      <section className="bg-background py-24 px-4">
+        <div className="container">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-12">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Inside the sketchbook</p>
+              <h2 className="font-serif text-3xl md:text-4xl font-semibold text-foreground mt-3">
+                Fresh Studies From The Studio
+              </h2>
+              <p className="text-muted-foreground mt-4 max-w-2xl">
+                A peek at the explorations that inform the finished originals - texture tests, palette rehearsals, and gesture work straight from the drafting table.
+              </p>
+            </div>
+            <Button asChild variant="outline" className="self-start md:self-auto">
+              <Link to="/shop">Collect The Final Pieces</Link>
+            </Button>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {sketchPieces.map((piece, index) => (
+              <figure
+                key={`${piece.id}-${piece.title}`}
+                className="group overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition-shadow hover:shadow-lg"
+              >
+                <div className="aspect-[3/4] overflow-hidden">
+                  <CloudinaryImage
+                    publicId={piece.publicId}
+                    width={800}
+                    height={900}
+                    alt={`${piece.title} sketch ${index + 1}`}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                </div>
+                <figcaption className="p-6">
+                  <p className="font-serif text-2xl text-foreground">{piece.title}</p>
+                  <p className="text-sm uppercase tracking-wide text-muted-foreground mt-2">{piece.medium}</p>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials */}
       <section className="container py-24 px-4">
         <h2 className="font-serif text-3xl md:text-4xl font-semibold text-foreground text-center mb-16">What Collectors Say</h2>
@@ -136,7 +162,7 @@ const Index = () => {
                 ))}
               </div>
               <p className="text-foreground mb-4 italic leading-relaxed">"{t.text}"</p>
-              <p className="text-sm font-medium text-muted-foreground">— {t.name}</p>
+              <p className="text-sm font-medium text-muted-foreground">- {t.name}</p>
             </div>
           ))}
         </div>
@@ -157,7 +183,7 @@ const Index = () => {
               className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/50"
             />
             <Button type="submit" disabled={subscribing} className="bg-accent text-accent-foreground hover:bg-accent/90 shrink-0">
-              {subscribing ? '…' : 'Subscribe'}
+              {subscribing ? '...' : 'Subscribe'}
             </Button>
           </form>
         </div>

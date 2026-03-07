@@ -1,0 +1,217 @@
+{
+  "products": [
+    {
+      "id": "prod_celestial_dusk",
+      "slug": "celestial-dusk",
+      "title": "Celestial Dusk",
+      "description": "Layered metallic washes capture the final seconds of daylight dissolving into deep indigo.",
+      "style": "Abstract",
+      "size": "Large",
+      "price": 2400,
+      "stock": 2,
+      "featured": true,
+      "materials": "Oil, interference pigments, canvas",
+      "dimensions": "48 x 60 in",
+      "created_at": "2025-02-18T15:00:00.000Z",
+      "images": [
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200&q=80",
+        "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "prod_golden_horizon",
+      "slug": "golden-horizon",
+      "title": "Golden Horizon",
+      "description": "A luminous coastal landscape painted with knife strokes that blur sea and sky.",
+      "style": "Landscape",
+      "size": "Medium",
+      "price": 1450,
+      "stock": 4,
+      "featured": true,
+      "materials": "Oil on linen",
+      "dimensions": "30 x 40 in",
+      "created_at": "2025-02-08T11:00:00.000Z",
+      "images": [
+        "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1200&q=80",
+        "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "prod_portrait_of_light",
+      "slug": "portrait-of-light",
+      "title": "Portrait of Light",
+      "description": "An intimate portrait rendered with translucent glazes that evoke motion.",
+      "style": "Portrait",
+      "size": "Medium",
+      "price": 1800,
+      "stock": 1,
+      "featured": false,
+      "materials": "Oil and egg tempera",
+      "dimensions": "28 x 36 in",
+      "created_at": "2025-01-28T10:30:00.000Z",
+      "images": [
+        "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "prod_verdant_quietude",
+      "slug": "verdant-quietude",
+      "title": "Verdant Quietude",
+      "description": "Quiet layers of moss greens and mineral blues inspired by forest understory.",
+      "style": "Landscape",
+      "size": "Large",
+      "price": 2100,
+      "stock": 0,
+      "featured": true,
+      "materials": "Acrylic, pumice gel",
+      "dimensions": "42 x 54 in",
+      "created_at": "2025-02-01T09:45:00.000Z",
+      "images": [
+        "https://images.unsplash.com/photo-1526481280695-3c469c042f49?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "prod_saffron_sonata",
+      "slug": "saffron-sonata",
+      "title": "Saffron Sonata",
+      "description": "Vibrant saffron fields collide with cobalt shadows in this energetic abstract.",
+      "style": "Abstract",
+      "size": "Small",
+      "price": 620,
+      "stock": 7,
+      "featured": false,
+      "materials": "Acrylic on panel",
+      "dimensions": "16 x 20 in",
+      "created_at": "2025-01-15T13:20:00.000Z",
+      "images": [
+        "https://images.unsplash.com/photo-1435773658541-98cedf12d3cd?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "prod_monarch_study",
+      "slug": "monarch-study",
+      "title": "Monarch Study",
+      "description": "A still life study of botanicals and monarch wings suspended mid-air.",
+      "style": "Still Life",
+      "size": "Small",
+      "price": 980,
+      "stock": 3,
+      "featured": false,
+      "materials": "Oil on birch",
+      "dimensions": "18 x 18 in",
+      "created_at": "2025-01-05T12:00:00.000Z",
+      "images": [
+        "https://images.unsplash.com/photo-1465310477141-6fb93167a273?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "prod_nocturne_bloom",
+      "slug": "nocturne-bloom",
+      "title": "Nocturne Bloom",
+      "description": "A moody palette of indigo florals emerging from a darkened ground.",
+      "style": "Modern",
+      "size": "Large",
+      "price": 2650,
+      "stock": 1,
+      "featured": true,
+      "materials": "Oil, cold wax",
+      "dimensions": "44 x 58 in",
+      "created_at": "2025-02-20T08:30:00.000Z",
+      "images": [
+        "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=1200&q=80",
+        "https://images.unsplash.com/photo-1479708231027-4be40f711aad?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "prod_ocean_folding",
+      "slug": "ocean-folding",
+      "title": "Ocean Folding",
+      "description": "Gesture-driven strokes that mimic the pull and release of Atlantic tides.",
+      "style": "Abstract",
+      "size": "Medium",
+      "price": 1600,
+      "stock": 5,
+      "featured": false,
+      "materials": "Oil on canvas",
+      "dimensions": "32 x 40 in",
+      "created_at": "2025-01-22T17:15:00.000Z",
+      "images": [
+        "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "prod_winter_veil",
+      "slug": "winter-veil",
+      "title": "Winter Veil",
+      "description": "Soft mineral tints layer into a misty winter hillside.",
+      "style": "Landscape",
+      "size": "Medium",
+      "price": 1320,
+      "stock": 6,
+      "featured": false,
+      "materials": "Watercolor on cotton",
+      "dimensions": "24 x 32 in",
+      "created_at": "2025-01-10T16:00:00.000Z",
+      "images": [
+        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80"
+      ]
+    },
+    {
+      "id": "prod_resonant_lines",
+      "slug": "resonant-lines",
+      "title": "Resonant Lines",
+      "description": "Graphite scaffolding over translucent washes exploring rhythm and pause.",
+      "style": "Modern",
+      "size": "Small",
+      "price": 750,
+      "stock": 8,
+      "featured": false,
+      "materials": "Graphite, gouache",
+      "dimensions": "18 x 24 in",
+      "created_at": "2025-01-02T14:10:00.000Z",
+      "images": [
+        "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1200&q=80"
+      ]
+    }
+  ],
+  "sketches": [
+    { "id": 1, "title": "Gesture Study I", "medium": "Charcoal on cotton", "src": "/media/sketchs/one.jpg" },
+    { "id": 2, "title": "Palette Notes", "medium": "Ink and gouache", "src": "/media/sketchs/two.jpg" },
+    { "id": 3, "title": "Botanical Lines", "medium": "Graphite", "src": "/media/sketchs/three.jpg" },
+    { "id": 4, "title": "Coastal Draft", "medium": "Watercolor", "src": "/media/sketchs/four.jpg" },
+    { "id": 5, "title": "Color Blocking", "medium": "Acrylic on paper", "src": "/media/sketchs/five.jpg" },
+    { "id": 6, "title": "Night Bloom", "medium": "Soft pastel", "src": "/media/sketchs/six.jpg" }
+  ],
+  "jobListings": [
+    {
+      "id": "job_studio_manager",
+      "title": "Studio Manager",
+      "department": "Studio",
+      "location": "Brooklyn, NY",
+      "type": "Full-time",
+      "description": "Coordinate inventory, packing, and installation schedules for new releases.",
+      "isActive": true
+    },
+    {
+      "id": "job_client_care",
+      "title": "Client Care Specialist",
+      "department": "Client Services",
+      "location": "Remote (US)",
+      "type": "Part-time",
+      "description": "Guide collectors through the commissioning process and handle post-sale care.",
+      "isActive": true
+    },
+    {
+      "id": "job_social_producer",
+      "title": "Social Content Producer",
+      "department": "Marketing",
+      "location": "Los Angeles, CA",
+      "type": "Contract",
+      "description": "Produce behind-the-scenes photo and video assets for digital launches.",
+      "isActive": false
+    }
+  ],
+  "orders": [],
+  "newsletterSubscribers": [],
+  "jobApplications": []
+}

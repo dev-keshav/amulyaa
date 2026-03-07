@@ -1,39 +1,40 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Search } from 'lucide-react';
+import CloudinaryImage from '@/components/media/CloudinaryImage';
+import { products } from '@/data/products';
 
 const styles = ['All', 'Abstract', 'Landscape', 'Portrait', 'Still Life', 'Modern'];
 const sizes = ['All', 'Small', 'Medium', 'Large'];
 
+const normalizeStyle = (value: string | null) => {
+  if (!value) return 'All';
+  const match = styles.find((s) => s.toLowerCase() === value.toLowerCase());
+  return match ?? 'All';
+};
+
 const Shop = () => {
   const [searchParams] = useSearchParams();
-  const initialStyle = searchParams.get('style') || 'All';
+  const initialStyle = normalizeStyle(searchParams.get('style'));
 
   const [search, setSearch] = useState('');
   const [style, setStyle] = useState(initialStyle);
   const [size, setSize] = useState('All');
-  const [priceRange, setPriceRange] = useState([0, 5000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sort, setSort] = useState('newest');
 
-  const { data: products, isLoading } = useQuery({
-    queryKey: ['products'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('products').select('*');
-      if (error) throw error;
-      return data;
-    },
-  });
+  useEffect(() => {
+    const nextStyle = normalizeStyle(searchParams.get('style'));
+    setStyle((prevStyle) => (prevStyle === nextStyle ? prevStyle : nextStyle));
+  }, [searchParams]);
 
   const filtered = useMemo(() => {
-    if (!products) return [];
     let result = [...products];
 
     if (search) {
@@ -42,15 +43,17 @@ const Shop = () => {
         (p) => p.title.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q)
       );
     }
-    if (style !== 'All') result = result.filter((p) => p.style?.toLowerCase() === style.toLowerCase());
-    if (size !== 'All') result = result.filter((p) => p.size?.toLowerCase() === size.toLowerCase());
+    if (style !== 'All') result = result.filter((p) => p.style.toLowerCase() === style.toLowerCase());
+    if (size !== 'All') result = result.filter((p) => p.size.toLowerCase() === size.toLowerCase());
     result = result.filter((p) => p.price >= priceRange[0] && p.price <= priceRange[1]);
     if (inStockOnly) result = result.filter((p) => p.stock > 0);
 
     switch (sort) {
       case 'price-asc': result.sort((a, b) => a.price - b.price); break;
       case 'price-desc': result.sort((a, b) => b.price - a.price); break;
-      case 'newest': result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()); break;
+      case 'newest':
+      default:
+        result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
 
     return result;
@@ -66,7 +69,7 @@ const Shop = () => {
         <aside className="w-full lg:w-64 shrink-0 space-y-8">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search paintings…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
+            <Input placeholder="Search paintings..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
           </div>
 
           <div>
@@ -91,9 +94,9 @@ const Shop = () => {
 
           <div>
             <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">
-              Price: ${priceRange[0]} — ${priceRange[1]}
+              Price: ${priceRange[0]} - ${priceRange[1]}
             </Label>
-            <Slider min={0} max={5000} step={50} value={priceRange} onValueChange={setPriceRange} className="mt-3" />
+            <Slider min={0} max={5000} step={50} value={priceRange} onValueChange={(value) => setPriceRange([value[0], value[1]])} className="mt-3" />
           </div>
 
           <div className="flex items-center gap-3">
@@ -110,19 +113,13 @@ const Shop = () => {
               <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="newest">Newest</SelectItem>
-                <SelectItem value="price-asc">Price: Low → High</SelectItem>
-                <SelectItem value="price-desc">Price: High → Low</SelectItem>
+                <SelectItem value="price-asc">Price: Low - High</SelectItem>
+                <SelectItem value="price-desc">Price: High - Low</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {isLoading ? (
-            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="aspect-[4/5] animate-pulse rounded-lg bg-muted" />
-              ))}
-            </div>
-          ) : filtered.length === 0 ? (
+          {filtered.length === 0 ? (
             <p className="text-center text-muted-foreground py-20">No paintings match your filters.</p>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
@@ -133,11 +130,12 @@ const Shop = () => {
                   className="group block overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg"
                 >
                   <div className="aspect-[4/5] overflow-hidden">
-                    <img
-                      src={p.images?.[0] || 'https://images.unsplash.com/photo-1578926288207-a90a5366759d?w=600&q=80'}
+                    <CloudinaryImage
+                      publicId={p.images[0]}
+                      width={600}
+                      height={750}
                       alt={p.title}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
                     />
                   </div>
                   <div className="p-5">
