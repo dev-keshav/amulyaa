@@ -8,6 +8,10 @@ import { Label } from '@/components/ui/label';
 import { Search } from 'lucide-react';
 import CloudinaryImage from '@/components/media/CloudinaryImage';
 import { products } from '@/data/products';
+import { motion } from 'framer-motion';
+import Reveal from '@/components/animation/Reveal';
+
+const MotionLink = motion(Link);
 
 const styles = ['All', 'Abstract', 'Landscape', 'Portrait', 'Still Life', 'Modern'];
 const sizes = ['All', 'Small', 'Medium', 'Large'];
@@ -61,16 +65,21 @@ const Shop = () => {
 
   return (
     <div className="container py-12 px-4">
-      <h1 className="font-serif text-4xl font-bold text-foreground mb-2">Shop Originals</h1>
-      <p className="text-muted-foreground mb-10">Browse our collection of handmade paintings.</p>
+      <Reveal>
+        <div>
+          <h1 className="font-serif text-4xl font-bold text-foreground mb-2">Shop Originals</h1>
+          <p className="text-muted-foreground mb-10">Browse our collection of handmade paintings.</p>
+        </div>
+      </Reveal>
 
       <div className="flex flex-col lg:flex-row gap-10">
         {/* Filters sidebar */}
-        <aside className="w-full lg:w-64 shrink-0 space-y-8">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search paintings..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
-          </div>
+        <Reveal className="w-full lg:w-64 shrink-0 space-y-8">
+          <aside className="space-y-8">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input placeholder="Search paintings..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
+            </div>
 
           <div>
             <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">Style</Label>
@@ -103,7 +112,8 @@ const Shop = () => {
             <Switch checked={inStockOnly} onCheckedChange={setInStockOnly} id="stock" />
             <Label htmlFor="stock" className="text-sm">In stock only</Label>
           </div>
-        </aside>
+          </aside>
+        </Reveal>
 
         {/* Products grid */}
         <div className="flex-1">
@@ -124,10 +134,15 @@ const Shop = () => {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
               {filtered.map((p) => (
-                <Link
+                <MotionLink
                   key={p.id}
                   to={`/shop/${p.slug}`}
                   className="group block overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-md"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  whileHover={{ translateY: -6 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.4 }}
                 >
                   <div className="aspect-[3/4] overflow-hidden">
                     <CloudinaryImage
@@ -146,7 +161,7 @@ const Shop = () => {
                       {p.stock <= 0 && <span className="text-xs text-destructive font-medium">Sold Out</span>}
                     </div>
                   </div>
-                </Link>
+                </MotionLink>
               ))}
             </div>
           )}
