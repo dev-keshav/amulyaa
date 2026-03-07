@@ -10,6 +10,7 @@ type CloudinaryImageProps = {
   height?: number;
   className?: string;
   wrapperClassName?: string;
+  skeletonClassName?: string;
   alt?: string;
   loading?: 'lazy' | 'eager';
 };
@@ -20,6 +21,7 @@ const CloudinaryImage = ({
   height,
   className,
   wrapperClassName,
+  skeletonClassName,
   alt = '',
   loading = 'lazy',
 }: CloudinaryImageProps) => {
@@ -28,7 +30,7 @@ const CloudinaryImage = ({
 
   return (
     <div className={cn('relative h-full w-full', wrapperClassName)}>
-      {!isLoaded && <Skeleton className="absolute inset-0 h-full w-full" />}
+      {!isLoaded && <Skeleton className={cn('absolute inset-0 h-full w-full', skeletonClassName)} />}
       <AdvancedImage
         cldImg={cldImg}
         className={cn(

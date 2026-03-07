@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ShoppingBag, Menu, X } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import { Button } from '@/components/ui/button';
+import CloudinaryImage from '@/components/media/CloudinaryImage';
 
 const navLinks = [
   { to: '/shop', label: 'Shop' },
@@ -18,8 +19,22 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <nav className="container flex h-16 items-center justify-between" aria-label="Main navigation">
-        <Link to="/" className="font-serif text-2xl font-bold tracking-tight text-foreground">
-          Atelier
+        <Link to="/" className="flex items-center gap-3 text-foreground" aria-label="Atelier home">
+          <div className="h-16 w-32 shrink-0">
+            <CloudinaryImage
+              publicId="logo"
+              width={1500}
+              height={800}
+              alt="Atelier logo"
+              className="h-full w-full object-contain"
+              wrapperClassName="h-full w-full bg-transparent"
+              skeletonClassName="bg-transparent"
+              loading="eager"
+            />
+          </div>
+          <span className="font-serif text-2xl font-bold tracking-tight hidden sm:inline">
+            Amulyaa
+          </span>
         </Link>
 
         {/* Desktop nav */}
