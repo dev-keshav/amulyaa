@@ -126,10 +126,10 @@ const ProductDetail = () => {
       {related && related.length > 0 && (
         <section className="mt-24">
           <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">You May Also Like</h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {related.map((p) => (
               <Link key={p.id} to={`/shop/${p.slug}`} className="group block overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg">
-                <div className="aspect-[4/5] overflow-hidden">
+                <div className="aspect-[3/4] overflow-hidden">
                   <CloudinaryImage
                     publicId={p.images[0]}
                     width={600}

@@ -62,7 +62,7 @@ const Index = () => {
           <h2 className="font-serif text-3xl md:text-4xl font-semibold text-foreground mb-4">Featured Collection</h2>
           <p className="text-muted-foreground max-w-xl mx-auto">Curated highlights from our latest body of work.</p>
         </div>
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {featuredProducts.map((product) => (
             <Link
               key={product.id}

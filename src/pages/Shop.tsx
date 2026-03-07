@@ -122,14 +122,14 @@ const Shop = () => {
           {filtered.length === 0 ? (
             <p className="text-center text-muted-foreground py-20">No paintings match your filters.</p>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
               {filtered.map((p) => (
                 <Link
                   key={p.id}
                   to={`/shop/${p.slug}`}
-                  className="group block overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg"
+                  className="group block overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-md"
                 >
-                  <div className="aspect-[4/5] overflow-hidden">
+                  <div className="aspect-[3/4] overflow-hidden">
                     <CloudinaryImage
                       publicId={p.images[0]}
                       width={600}
@@ -138,11 +138,11 @@ const Shop = () => {
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
-                  <div className="p-5">
-                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">{p.style}</p>
-                    <h3 className="font-serif text-lg font-semibold text-foreground">{p.title}</h3>
-                    <div className="mt-2 flex items-center justify-between">
-                      <span className="font-medium text-foreground">${p.price}</span>
+                  <div className="p-4">
+                    <p className="text-[0.7rem] font-medium uppercase tracking-wider text-muted-foreground mb-1">{p.style}</p>
+                    <h3 className="font-serif text-base font-semibold text-foreground leading-tight">{p.title}</h3>
+                    <div className="mt-2 flex items-center justify-between text-sm">
+                      <span className="font-semibold text-foreground">${p.price}</span>
                       {p.stock <= 0 && <span className="text-xs text-destructive font-medium">Sold Out</span>}
                     </div>
                   </div>
