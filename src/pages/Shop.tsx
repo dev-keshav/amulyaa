@@ -1,20 +1,26 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { Search, SlidersHorizontal, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import CloudinaryImage from '@/components/media/CloudinaryImage';
+import Reveal from '@/components/animation/Reveal';
+import PageHero from '@/components/layout/PageHero';
 import { products } from '@/data/products';
+
+const MotionLink = motion(Link);
 
 const styles = ['All', 'Abstract', 'Landscape', 'Portrait', 'Still Life', 'Modern'];
 const sizes = ['All', 'Small', 'Medium', 'Large'];
 
 const normalizeStyle = (value: string | null) => {
   if (!value) return 'All';
-  const match = styles.find((s) => s.toLowerCase() === value.toLowerCase());
+  const match = styles.find((style) => style.toLowerCase() === value.toLowerCase());
   return match ?? 'All';
 };
 
@@ -31,128 +37,308 @@ const Shop = () => {
 
   useEffect(() => {
     const nextStyle = normalizeStyle(searchParams.get('style'));
-    setStyle((prevStyle) => (prevStyle === nextStyle ? prevStyle : nextStyle));
+    setStyle((currentStyle) => (currentStyle === nextStyle ? currentStyle : nextStyle));
   }, [searchParams]);
 
   const filtered = useMemo(() => {
     let result = [...products];
 
     if (search) {
-      const q = search.toLowerCase();
+      const query = search.toLowerCase();
       result = result.filter(
-        (p) => p.title.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q)
+        (product) =>
+          product.title.toLowerCase().includes(query) ||
+          product.description?.toLowerCase().includes(query),
       );
     }
-    if (style !== 'All') result = result.filter((p) => p.style.toLowerCase() === style.toLowerCase());
-    if (size !== 'All') result = result.filter((p) => p.size.toLowerCase() === size.toLowerCase());
-    result = result.filter((p) => p.price >= priceRange[0] && p.price <= priceRange[1]);
-    if (inStockOnly) result = result.filter((p) => p.stock > 0);
+
+    if (style !== 'All') {
+      result = result.filter((product) => product.style.toLowerCase() === style.toLowerCase());
+    }
+
+    if (size !== 'All') {
+      result = result.filter((product) => product.size.toLowerCase() === size.toLowerCase());
+    }
+
+    result = result.filter(
+      (product) => product.price >= priceRange[0] && product.price <= priceRange[1],
+    );
+
+    if (inStockOnly) {
+      result = result.filter((product) => product.stock > 0);
+    }
 
     switch (sort) {
-      case 'price-asc': result.sort((a, b) => a.price - b.price); break;
-      case 'price-desc': result.sort((a, b) => b.price - a.price); break;
+      case 'price-asc':
+        result.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-desc':
+        result.sort((a, b) => b.price - a.price);
+        break;
       case 'newest':
       default:
         result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
 
     return result;
-  }, [products, search, style, size, priceRange, inStockOnly, sort]);
+  }, [inStockOnly, priceRange, search, size, sort, style]);
+
+  const hasActiveFilters =
+    search.length > 0 ||
+    style !== 'All' ||
+    size !== 'All' ||
+    priceRange[0] !== 0 ||
+    priceRange[1] !== 5000 ||
+    inStockOnly;
+
+  const resetFilters = () => {
+    setSearch('');
+    setStyle('All');
+    setSize('All');
+    setPriceRange([0, 5000]);
+    setInStockOnly(false);
+    setSort('newest');
+  };
+
+  const featuredCount = products.filter((product) => product.featured).length;
+  const activeFilters = [
+    search ? `Search: ${search}` : null,
+    style !== 'All' ? `Style: ${style}` : null,
+    size !== 'All' ? `Size: ${size}` : null,
+    (priceRange[0] !== 0 || priceRange[1] !== 5000)
+      ? `Budget: $${priceRange[0]}-$${priceRange[1]}`
+      : null,
+    inStockOnly ? 'In stock only' : null,
+  ].filter(Boolean) as string[];
 
   return (
-    <div className="container py-12 px-4">
-      <h1 className="font-serif text-4xl font-bold text-foreground mb-2">Shop Originals</h1>
-      <p className="text-muted-foreground mb-10">Browse our collection of handmade paintings.</p>
-
-      <div className="flex flex-col lg:flex-row gap-10">
-        {/* Filters sidebar */}
-        <aside className="w-full lg:w-64 shrink-0 space-y-8">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search paintings..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
-          </div>
-
-          <div>
-            <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">Style</Label>
-            <Select value={style} onValueChange={setStyle}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {styles.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">Size</Label>
-            <Select value={size} onValueChange={setSize}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {sizes.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label className="text-xs uppercase tracking-wider text-muted-foreground mb-2 block">
-              Price: ${priceRange[0]} - ${priceRange[1]}
-            </Label>
-            <Slider min={0} max={5000} step={50} value={priceRange} onValueChange={(value) => setPriceRange([value[0], value[1]])} className="mt-3" />
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Switch checked={inStockOnly} onCheckedChange={setInStockOnly} id="stock" />
-            <Label htmlFor="stock" className="text-sm">In stock only</Label>
-          </div>
-        </aside>
-
-        {/* Products grid */}
-        <div className="flex-1">
-          <div className="flex items-center justify-between mb-6">
-            <p className="text-sm text-muted-foreground">{filtered.length} painting{filtered.length !== 1 ? 's' : ''}</p>
-            <Select value={sort} onValueChange={setSort}>
-              <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Newest</SelectItem>
-                <SelectItem value="price-asc">Price: Low - High</SelectItem>
-                <SelectItem value="price-desc">Price: High - Low</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {filtered.length === 0 ? (
-            <p className="text-center text-muted-foreground py-20">No paintings match your filters.</p>
-          ) : (
-            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {filtered.map((p) => (
-                <Link
-                  key={p.id}
-                  to={`/shop/${p.slug}`}
-                  className="group block overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg"
-                >
-                  <div className="aspect-[4/5] overflow-hidden">
-                    <CloudinaryImage
-                      publicId={p.images[0]}
-                      width={600}
-                      height={750}
-                      alt={p.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="p-5">
-                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">{p.style}</p>
-                    <h3 className="font-serif text-lg font-semibold text-foreground">{p.title}</h3>
-                    <div className="mt-2 flex items-center justify-between">
-                      <span className="font-medium text-foreground">${p.price}</span>
-                      {p.stock <= 0 && <span className="text-xs text-destructive font-medium">Sold Out</span>}
-                    </div>
-                  </div>
-                </Link>
-              ))}
+    <>
+      <PageHero
+        eyebrow="Original collection"
+        title="Browse the current wall of available works."
+        description="Filter by mood, size, and price to find a piece that fits the room and the scale you need."
+        stats={[
+          { label: 'Available now', value: `${products.length}` },
+          { label: 'Featured works', value: `${featuredCount}` },
+          { label: 'Styles represented', value: `${styles.length - 1}` },
+        ]}
+        aside={(
+          <div className="surface-panel-muted p-6">
+            <div className="flex items-center gap-2 text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+              <Sparkles className="h-3.5 w-3.5" />
+              Curator note
             </div>
-          )}
+            <p className="mt-4 text-sm leading-7 text-muted-foreground">
+              Each piece is a single original. When a work is marked sold out, it is archived rather than reproduced.
+            </p>
+            <div className="mt-6 grid gap-3">
+              <div className="surface-panel bg-background/70 p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Best for</p>
+                <p className="mt-2 text-sm text-foreground">Living rooms, hospitality suites, and quiet statement corners.</p>
+              </div>
+              <div className="surface-panel bg-background/70 p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Need guidance?</p>
+                <p className="mt-2 text-sm text-foreground">Shortlist your favorites, then use the contact page for placement advice.</p>
+              </div>
+            </div>
+          </div>
+        )}
+      />
+
+      <section className="container px-4 pb-14">
+        <div className="grid gap-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start">
+          <Reveal className="lg:sticky lg:top-28">
+            <aside className="surface-panel p-6">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/12">
+                    <SlidersHorizontal className="h-4 w-4 text-accent" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">Refine the collection</p>
+                    <p className="text-sm text-muted-foreground">Adjust mood, scale, and budget.</p>
+                  </div>
+                </div>
+                {hasActiveFilters && (
+                  <button
+                    type="button"
+                    onClick={resetFilters}
+                    className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
+                  >
+                    Reset
+                  </button>
+                )}
+              </div>
+
+              <div className="mt-6 space-y-6">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="Search paintings..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="pl-11"
+                  />
+                </div>
+
+                <div>
+                  <Label className="mb-2 block text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                    Style
+                  </Label>
+                  <Select value={style} onValueChange={setStyle}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {styles.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label className="mb-2 block text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                    Size
+                  </Label>
+                  <Select value={size} onValueChange={setSize}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sizes.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label className="block text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                    Budget
+                  </Label>
+                  <p className="mt-2 text-sm text-foreground">
+                    ${priceRange[0]} - ${priceRange[1]}
+                  </p>
+                  <Slider
+                    min={0}
+                    max={5000}
+                    step={50}
+                    value={priceRange}
+                    onValueChange={(value) => setPriceRange([value[0], value[1]])}
+                    className="mt-4"
+                  />
+                </div>
+
+                <div className="surface-panel-muted flex items-center justify-between gap-3 p-4">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Only show available works</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Hide archived sold pieces.</p>
+                  </div>
+                  <Switch checked={inStockOnly} onCheckedChange={setInStockOnly} id="stock" />
+                </div>
+              </div>
+            </aside>
+          </Reveal>
+
+          <div>
+            <Reveal>
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {filtered.length} painting{filtered.length !== 1 ? 's' : ''} shown
+                  </p>
+                  {activeFilters.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {activeFilters.map((filter) => (
+                        <span key={filter} className="info-chip">
+                          {filter}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <Select value={sort} onValueChange={setSort}>
+                  <SelectTrigger className="w-full md:w-56">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="newest">Newest arrivals</SelectItem>
+                    <SelectItem value="price-asc">Price: Low to high</SelectItem>
+                    <SelectItem value="price-desc">Price: High to low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </Reveal>
+
+            {filtered.length === 0 ? (
+              <div className="surface-panel mt-8 px-6 py-16 text-center">
+                <p className="font-serif text-4xl text-foreground">No matches yet.</p>
+                <p className="mx-auto mt-4 max-w-md text-sm leading-7 text-muted-foreground">
+                  Try broadening your filters or resetting the search to see the full collection again.
+                </p>
+                <Button variant="outline" className="mt-6" onClick={resetFilters}>
+                  Clear filters
+                </Button>
+              </div>
+            ) : (
+              <div className="mt-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {filtered.map((product, index) => (
+                  <MotionLink
+                    key={product.id}
+                    to={`/shop/${product.slug}`}
+                    className="surface-panel group block p-3"
+                    initial={{ opacity: 0, y: 36 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    whileHover={{ translateY: -6 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.4, delay: index * 0.04 }}
+                  >
+                    <div className="aspect-[4/5] overflow-hidden rounded-[1.6rem]">
+                      <CloudinaryImage
+                        publicId={product.images[0]}
+                        width={800}
+                        height={1000}
+                        alt={product.title}
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    </div>
+
+                    <div className="px-2 pb-2 pt-5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="info-chip text-xs">{product.style}</span>
+                        <span className="info-chip text-xs">{product.size}</span>
+                      </div>
+                      <h3 className="mt-4 font-serif text-3xl text-foreground">{product.title}</h3>
+                      <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                        {product.description}
+                      </p>
+                      <div className="mt-5 flex items-center justify-between gap-4">
+                        <span className="text-lg font-semibold text-foreground">${product.price}</span>
+                        {product.stock > 0 ? (
+                          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                            {product.stock} available
+                          </span>
+                        ) : (
+                          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-destructive">
+                            Sold out
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </MotionLink>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </>
   );
 };
 

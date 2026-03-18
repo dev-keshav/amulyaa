@@ -1,21 +1,41 @@
 import { Link, useSearchParams } from 'react-router-dom';
+import { CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { CheckCircle } from 'lucide-react';
+import PageHero from '@/components/layout/PageHero';
 
 const CheckoutSuccess = () => {
   const [params] = useSearchParams();
   const sessionId = params.get('session_id');
 
   return (
-    <div className="container py-24 text-center max-w-lg px-4">
-      <CheckCircle className="mx-auto h-16 w-16 text-accent mb-6" />
-      <h1 className="font-serif text-3xl font-bold text-foreground mb-4">Thank You!</h1>
-      <p className="text-muted-foreground mb-2">Your order has been confirmed and is being prepared.</p>
-      {sessionId && <p className="text-xs text-muted-foreground mb-8">Order ref: {sessionId.slice(-8).toUpperCase()}</p>}
-      <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
-        <Link to="/shop">Continue Shopping</Link>
-      </Button>
-    </div>
+    <>
+      <PageHero
+        compact
+        centered
+        eyebrow="Order confirmed"
+        title="Thank you. Your order is now being prepared."
+        description="A confirmation reference is shown below for your records."
+        actions={(
+          <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/92">
+            <Link to="/shop">Continue shopping</Link>
+          </Button>
+        )}
+      />
+
+      <section className="container px-4 pb-16">
+        <div className="mx-auto max-w-xl surface-panel p-8 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent/12">
+            <CheckCircle2 className="h-8 w-8 text-accent" />
+          </div>
+          <p className="mt-6 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+            Reference
+          </p>
+          <p className="mt-3 font-serif text-4xl text-foreground">
+            {sessionId ? sessionId.slice(-8).toUpperCase() : 'PENDING'}
+          </p>
+        </div>
+      </section>
+    </>
   );
 };
 
