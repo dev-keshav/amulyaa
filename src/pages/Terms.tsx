@@ -1,26 +1,43 @@
+import PageHero from '@/components/layout/PageHero';
+
 const Terms = () => (
-  <div className="container py-16 px-4 max-w-3xl">
-    <h1 className="font-serif text-4xl font-bold text-foreground mb-8">Terms of Service</h1>
-    <div className="space-y-6 text-muted-foreground leading-relaxed text-sm">
-      <p>Last updated: February 2026</p>
-      <section>
-        <h2 className="font-serif text-lg font-semibold text-foreground mb-2">Agreement</h2>
-        <p>By accessing and using Atelier, you agree to be bound by these Terms of Service. If you do not agree, please do not use our services.</p>
-      </section>
-      <section>
-        <h2 className="font-serif text-lg font-semibold text-foreground mb-2">Purchases</h2>
-        <p>All sales are subject to product availability. Prices are listed in USD and are subject to change. Payment is processed securely through Stripe at the time of purchase.</p>
-      </section>
-      <section>
-        <h2 className="font-serif text-lg font-semibold text-foreground mb-2">Intellectual Property</h2>
-        <p>All paintings, images, and content on this site are the property of Atelier and may not be reproduced without permission. Purchasing a painting grants you ownership of the physical work but not reproduction rights.</p>
-      </section>
-      <section>
-        <h2 className="font-serif text-lg font-semibold text-foreground mb-2">Limitation of Liability</h2>
-        <p>Atelier is not liable for any indirect, incidental, or consequential damages arising from the use of our services or products.</p>
-      </section>
-    </div>
-  </div>
+  <>
+    <PageHero
+      compact
+      centered
+      eyebrow="Policies"
+      title="Terms of service"
+      description="Core terms for browsing, purchasing, and collecting work from Amulyaa."
+    />
+
+    <section className="container px-4 pb-16">
+      <div className="surface-panel px-6 py-8 md:px-10 md:py-10">
+        <div className="max-w-3xl content-rich">
+          <p>Last updated: March 2026</p>
+
+          <h2>Agreement</h2>
+          <p>
+            By accessing and using Amulyaa, you agree to these Terms of Service. If you do not agree, please do not use the website or place orders through it.
+          </p>
+
+          <h2>Purchases</h2>
+          <p>
+            All sales are subject to product availability. Prices are listed in USD and may change without prior notice. Payment is processed at the time of purchase.
+          </p>
+
+          <h2>Intellectual property</h2>
+          <p>
+            All paintings, imagery, and written content on the site remain the property of Amulyaa. Purchasing an original artwork transfers ownership of the physical piece only, not reproduction rights.
+          </p>
+
+          <h2>Limitation of liability</h2>
+          <p>
+            Amulyaa is not liable for indirect, incidental, or consequential damages arising from the use of the site or from purchased products.
+          </p>
+        </div>
+      </div>
+    </section>
+  </>
 );
 
 export default Terms;
