@@ -14,6 +14,7 @@ import Careers from "./pages/Careers";
 import ShippingReturns from "./pages/ShippingReturns";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import Checkout from "./pages/Checkout";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
 import CheckoutCancel from "./pages/CheckoutCancel";
 import NotFound from "./pages/NotFound";
@@ -37,6 +38,7 @@ const AnimatedRoutes = () => {
           <Route path="/shipping-returns" element={withTransition(<ShippingReturns />)} />
           <Route path="/privacy" element={withTransition(<Privacy />)} />
           <Route path="/terms" element={withTransition(<Terms />)} />
+          <Route path="/checkout" element={withTransition(<Checkout />)} />
           <Route path="/checkout/success" element={withTransition(<CheckoutSuccess />)} />
           <Route path="/checkout/cancel" element={withTransition(<CheckoutCancel />)} />
           <Route path="*" element={withTransition(<NotFound />)} />

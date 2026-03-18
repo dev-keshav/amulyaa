@@ -2,18 +2,20 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { Briefcase, MapPin } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { toast } from 'sonner';
-import { Briefcase, MapPin } from 'lucide-react';
+import PageHero from '@/components/layout/PageHero';
+import Reveal from '@/components/animation/Reveal';
 import { jobListings } from '@/data/job-listings';
 
 const applySchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
+  name: z.string().min(2, 'Name is required'),
+  email: z.string().email('Valid email required'),
   resume_url: z.string().url('Please enter a valid URL'),
   cover_letter: z.string().min(20, 'At least 20 characters'),
 });
@@ -25,65 +27,149 @@ const Careers = () => {
   const form = useForm<ApplyData>({ resolver: zodResolver(applySchema) });
   const jobs = jobListings.filter((job) => job.isActive);
 
-  const onSubmit = async (data: ApplyData) => {
+  const onSubmit = async (_data: ApplyData) => {
     if (!applyingTo) return;
+
     await new Promise((resolve) => setTimeout(resolve, 600));
-    toast.success('Application submitted!');
+    toast.success('Application submitted.');
     form.reset();
     setApplyingTo(null);
   };
 
   return (
-    <div className="container py-16 px-4 max-w-3xl">
-      <h1 className="font-serif text-4xl font-bold text-foreground mb-2">Join Atelier</h1>
-      <p className="text-muted-foreground mb-12">Help us bring original art to the world. Open positions below.</p>
+    <>
+      <PageHero
+        eyebrow="Careers"
+        title="Help shape the studio experience behind each release."
+        description="Amulyaa looks for operators, storytellers, and client-facing collaborators who care about detail, hospitality, and thoughtful presentation."
+        stats={[
+          { label: 'Open roles', value: `${jobs.length}` },
+          { label: 'Team style', value: 'Hybrid' },
+          { label: 'Focus', value: 'Art + service' },
+        ]}
+      />
 
-      {!jobs.length ? (
-        <p className="text-muted-foreground py-12 text-center">No open positions right now. Check back soon!</p>
-      ) : (
-        <div className="space-y-4">
-          {jobs.map((job) => (
-            <div key={job.id} className="rounded-lg border border-border bg-card p-6">
-              <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div>
-                  <h2 className="font-serif text-xl font-semibold text-foreground">{job.title}</h2>
-                  <div className="flex flex-wrap gap-4 mt-2 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1"><Briefcase className="h-3.5 w-3.5" />{job.department} - {job.type}</span>
-                    <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{job.location}</span>
+      <section className="container px-4 pb-16">
+        {!jobs.length ? (
+          <div className="surface-panel px-6 py-16 text-center">
+            <p className="font-serif text-4xl text-foreground">No open roles right now.</p>
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-muted-foreground">
+              We update this page when new studio, operations, or client experience positions open.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-5">
+            {jobs.map((job, index) => (
+              <Reveal key={job.id} delay={index * 0.06}>
+                <div className="surface-panel p-6 md:p-8">
+                  <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="max-w-2xl">
+                      <h2 className="font-serif text-4xl text-foreground">{job.title}</h2>
+                      <div className="mt-4 flex flex-wrap gap-3 text-sm text-muted-foreground">
+                        <span className="info-chip">
+                          <Briefcase className="h-4 w-4" />
+                          {job.department} - {job.type}
+                        </span>
+                        <span className="info-chip">
+                          <MapPin className="h-4 w-4" />
+                          {job.location}
+                        </span>
+                      </div>
+                      <p className="mt-5 text-sm leading-7 text-muted-foreground">{job.description}</p>
+                    </div>
+
+                    <Dialog
+                      open={applyingTo === job.id}
+                      onOpenChange={(open) => {
+                        if (!open) setApplyingTo(null);
+                      }}
+                    >
+                      <DialogTrigger asChild>
+                        <Button variant="outline" onClick={() => setApplyingTo(job.id)}>
+                          Apply now
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Apply for {job.title}</DialogTitle>
+                        </DialogHeader>
+
+                        <Form {...form}>
+                          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                            <FormField
+                              control={form.control}
+                              name="name"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Name</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="email"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Email</FormLabel>
+                                  <FormControl>
+                                    <Input type="email" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="resume_url"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Resume URL</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="https://..." {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="cover_letter"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Cover letter</FormLabel>
+                                  <FormControl>
+                                    <Textarea rows={5} {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <Button
+                              type="submit"
+                              className="w-full bg-accent text-accent-foreground hover:bg-accent/92"
+                            >
+                              Submit application
+                            </Button>
+                          </form>
+                        </Form>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </div>
-                <Dialog open={applyingTo === job.id} onOpenChange={(open) => { if (!open) setApplyingTo(null); }}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" onClick={() => setApplyingTo(job.id)}>Apply</Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader><DialogTitle>Apply for {job.title}</DialogTitle></DialogHeader>
-                    <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField control={form.control} name="name" render={({ field }) => (
-                          <FormItem><FormLabel>Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                        )} />
-                        <FormField control={form.control} name="email" render={({ field }) => (
-                          <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" {...field} /></FormControl><FormMessage /></FormItem>
-                        )} />
-                        <FormField control={form.control} name="resume_url" render={({ field }) => (
-                          <FormItem><FormLabel>Resume URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl><FormMessage /></FormItem>
-                        )} />
-                        <FormField control={form.control} name="cover_letter" render={({ field }) => (
-                          <FormItem><FormLabel>Cover Letter</FormLabel><FormControl><Textarea rows={4} {...field} /></FormControl><FormMessage /></FormItem>
-                        )} />
-                        <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90">Submit Application</Button>
-                      </form>
-                    </Form>
-                  </DialogContent>
-                </Dialog>
-              </div>
-              <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{job.description}</p>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+              </Reveal>
+            ))}
+          </div>
+        )}
+      </section>
+    </>
   );
 };
 
