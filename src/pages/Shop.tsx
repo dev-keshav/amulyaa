@@ -12,6 +12,7 @@ import CloudinaryImage from '@/components/media/CloudinaryImage';
 import Reveal from '@/components/animation/Reveal';
 import PageHero from '@/components/layout/PageHero';
 import { products } from '@/data/products';
+import SEOMeta from '@/components/SEOMeta';
 
 const MotionLink = motion(Link);
 
@@ -113,6 +114,18 @@ const Shop = () => {
 
   return (
     <>
+      <SEOMeta
+        title="Shop Original Paintings — Browse the Collection"
+        description="Browse original hand-painted works by Amulyaa. Filter by style (Abstract, Landscape, Portrait), size, and price. Each piece is a single original — worldwide shipping."
+        canonical="/shop"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: 'Amulyaa — Original Paintings Shop',
+          url: 'https://www.amulyaa.art/shop',
+          description: 'Browse original hand-painted artworks available for purchase.',
+        }}
+      />
       <PageHero
         eyebrow="Original collection"
         title="Browse the current wall of available works."
@@ -292,10 +305,9 @@ const Shop = () => {
                   <MotionLink
                     key={product.id}
                     to={`/shop/${product.slug}`}
-                    className="surface-panel group block p-3"
+                    className="surface-panel card-hover group block p-3"
                     initial={{ opacity: 0, y: 36 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    whileHover={{ translateY: -6 }}
                     viewport={{ once: true, amount: 0.2 }}
                     transition={{ duration: 0.4, delay: index * 0.04 }}
                   >
@@ -305,6 +317,7 @@ const Shop = () => {
                         width={800}
                         height={1000}
                         alt={product.title}
+                        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     </div>
@@ -314,12 +327,21 @@ const Shop = () => {
                         <span className="info-chip text-xs">{product.style}</span>
                         <span className="info-chip text-xs">{product.size}</span>
                       </div>
-                      <h3 className="mt-4 font-serif text-3xl text-foreground">{product.title}</h3>
-                      <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                      <h3 className="mt-4 font-serif text-3xl font-semibold text-foreground leading-tight">{product.title}</h3>
+                      <p className="mt-3 text-sm leading-[1.75] text-muted-foreground">
                         {product.description}
                       </p>
                       <div className="mt-5 flex items-center justify-between gap-4">
-                        <span className="text-lg font-semibold text-foreground">${product.price}</span>
+                        <span
+                          className="inline-block rounded-full px-4 py-1.5 text-sm font-semibold"
+                          style={{
+                            background: 'linear-gradient(135deg, hsl(22 82% 50% / 0.12) 0%, hsl(28 90% 58% / 0.09) 100%)',
+                            border: '1px solid hsl(22 82% 50% / 0.22)',
+                            color: 'hsl(22 68% 36%)',
+                          }}
+                        >
+                          ${product.price}
+                        </span>
                         {product.stock > 0 ? (
                           <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                             {product.stock} available
