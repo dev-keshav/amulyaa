@@ -1,6 +1,5 @@
-import { AdvancedImage } from '@cloudinary/react';
 import { useMemo, useState } from 'react';
-import { buildCloudinaryImage } from '@/lib/cloudinary';
+import { buildCloudinaryUrl } from '@/lib/cloudinary';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
@@ -13,6 +12,9 @@ type CloudinaryImageProps = {
   skeletonClassName?: string;
   alt?: string;
   loading?: 'lazy' | 'eager';
+  sizes?: string;
+  fetchPriority?: 'high' | 'low' | 'auto';
+  decoding?: 'async' | 'auto' | 'sync';
 };
 
 const CloudinaryImage = ({
@@ -24,22 +26,30 @@ const CloudinaryImage = ({
   skeletonClassName,
   alt = '',
   loading = 'lazy',
+  sizes,
+  fetchPriority = 'auto',
+  decoding = 'async',
 }: CloudinaryImageProps) => {
-  const cldImg = useMemo(() => buildCloudinaryImage(publicId, { width, height }), [publicId, width, height]);
+  const imageUrl = useMemo(() => buildCloudinaryUrl(publicId, { width, height }), [publicId, width, height]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   return (
     <div className={cn('relative h-full w-full', wrapperClassName)}>
       {!isLoaded && <Skeleton className={cn('absolute inset-0 h-full w-full', skeletonClassName)} />}
-      <AdvancedImage
-        cldImg={cldImg}
+      <img
+        src={imageUrl}
         className={cn(
           'h-full w-full transition-opacity duration-500',
           isLoaded ? 'opacity-100' : 'opacity-0',
           className,
         )}
         alt={alt}
+        width={width}
+        height={height}
         loading={loading}
+        sizes={sizes}
+        fetchPriority={fetchPriority}
+        decoding={decoding}
         onLoad={() => setIsLoaded(true)}
         onError={() => setIsLoaded(true)}
       />
