@@ -45,7 +45,7 @@ const Cart = () => {
         ]}
       />
 
-      <section className="container px-4 pb-16">
+      <section className="container px-2 pb-16 md:px-3">
         <div className="grid gap-8 xl:grid-cols-[1.08fr_0.92fr] xl:items-start">
           <Reveal className="space-y-5">
             <div className="surface-panel p-6">
@@ -76,7 +76,7 @@ const Cart = () => {
                             <p className="mt-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                               {item.size}
                             </p>
-                            <p className="mt-3 text-sm font-semibold text-foreground">${item.price}</p>
+                            {/* <p className="mt-3 text-sm font-semibold text-foreground">${item.price}</p> */}
                           </div>
                           <p className="text-sm font-semibold text-foreground">
                             ${(item.price * item.quantity).toFixed(2)}
@@ -108,7 +108,6 @@ const Cart = () => {
                             className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm text-muted-foreground hover:bg-background/70 hover:text-destructive"
                           >
                             <Trash2 className="h-4 w-4" />
-                            Remove
                           </button>
                         </div>
                       </div>

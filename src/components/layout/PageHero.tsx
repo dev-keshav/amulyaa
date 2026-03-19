@@ -39,7 +39,7 @@ const PageHero = ({
     <section className={cn('relative', className)}>
       <div
         className={cn(
-          'container px-4',
+          'container px-2 md:px-3',
           compact ? 'pb-10 pt-8 md:pb-12 md:pt-10' : 'pb-14 pt-10 md:pb-16 md:pt-12',
         )}
       >

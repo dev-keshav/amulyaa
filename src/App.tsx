@@ -12,6 +12,7 @@ const Index = lazy(() => import("./pages/Index"));
 const Shop = lazy(() => import("./pages/Shop"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Cart = lazy(() => import("./pages/Cart"));
+const Favorites = lazy(() => import("./pages/Favorites"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Careers = lazy(() => import("./pages/Careers"));
@@ -24,7 +25,7 @@ const CheckoutCancel = lazy(() => import("./pages/CheckoutCancel"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const RouteFallback = () => (
-  <div className="container px-4 pb-16 pt-10 md:pb-20 md:pt-14">
+  <div className="container px-2 pb-16 pt-10 md:px-3 md:pb-20 md:pt-14">
     <div className="surface-panel h-[52vh] animate-pulse" />
   </div>
 );
@@ -44,6 +45,7 @@ const AnimatedRoutes = () => {
           <Route path="/" element={withTransition(<Index />)} />
           <Route path="/shop" element={withTransition(<Shop />)} />
           <Route path="/shop/:slug" element={withTransition(<ProductDetail />)} />
+          <Route path="/favorites" element={withTransition(<Favorites />)} />
           <Route path="/cart" element={withTransition(<Cart />)} />
           <Route path="/about" element={withTransition(<About />)} />
           <Route path="/contact" element={withTransition(<Contact />)} />

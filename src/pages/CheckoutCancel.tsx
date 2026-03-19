@@ -23,7 +23,7 @@ const CheckoutCancel = () => (
       )}
     />
 
-    <section className="container px-4 pb-16">
+    <section className="container px-2 pb-16 md:px-3">
       <div className="mx-auto flex max-w-xl items-center gap-4 rounded-[2rem] border border-border/70 bg-secondary/50 p-6">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-background/80">
           <XCircle className="h-7 w-7 text-muted-foreground" />

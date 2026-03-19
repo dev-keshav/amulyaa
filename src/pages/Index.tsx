@@ -7,12 +7,11 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import CloudinaryImage from '@/components/media/CloudinaryImage';
 import Reveal from '@/components/animation/Reveal';
+import ProductCardActions from '@/components/shop/ProductCardActions';
 import { products } from '@/data/products';
 import { sketches as sketchPieces } from '@/data/sketches';
 import { cn } from '@/lib/utils';
 import SEOMeta from '@/components/SEOMeta';
-
-const MotionLink = motion(Link);
 
 const testimonials = [
   {
@@ -95,7 +94,7 @@ const Index = () => {
         }}
       />
       <motion.section
-        className="container px-4 pb-16 pt-10 md:pb-20 md:pt-14"
+        className="container px-2 pb-16 pt-10 md:px-3 md:pb-20 md:pt-14"
         initial={false}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
@@ -324,7 +323,7 @@ const Index = () => {
       </motion.section>
 
       {/* ── Featured Collection ── */}
-      <section className="container px-4 py-16 md:py-20">
+      <section className="container px-2 py-16 md:px-3 md:py-20">
         <Reveal>
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
@@ -342,11 +341,10 @@ const Index = () => {
 
         <div className="mt-11 grid gap-5 lg:grid-cols-12">
           {featuredProducts.map((product, index) => (
-            <MotionLink
+            <motion.article
               key={product.id}
-              to={`/shop/${product.slug}`}
               className={cn(
-                'surface-panel card-hover group block p-2.5',
+                'surface-panel card-hover group relative p-2.5',
                 index === 0 ? 'lg:col-span-3' : 'lg:col-span-3',
               )}
               initial={{ opacity: 0, y: 40 }}
@@ -354,51 +352,55 @@ const Index = () => {
               transition={{ duration: 0.5, delay: index * 0.06 }}
               viewport={{ once: true, amount: 0.2 }}
             >
-              <div className={cn('overflow-hidden rounded-[1.5rem]', index === 0 ? 'aspect-[5/4]' : 'aspect-[4/4.7]')}>
-                <CloudinaryImage
-                  publicId={product.images[0]}
-                  width={900}
-                  height={1100}
-                  alt={product.title}
-                  loading={index === 0 ? 'eager' : 'lazy'}
-                  fetchPriority={index === 0 ? 'high' : 'auto'}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-108"
-                />
-              </div>
+              <ProductCardActions product={product} className="p-4" />
 
-              <div className="mt-4 flex items-start justify-between gap-3 px-2 pb-2">
-                <div>
-                  <p className="text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
-                    {product.style}
-                  </p>
-                  <h3 className="mt-2 font-serif text-[1.85rem] font-semibold text-foreground leading-tight">
-                    {product.title}
-                  </h3>
-                  <p className="mt-2.5 max-w-sm text-sm leading-[1.7] text-muted-foreground">
-                    {product.description}
-                  </p>
+              <Link to={`/shop/${product.slug}`} className="block">
+                <div className={cn('overflow-hidden rounded-[1.5rem]', index === 0 ? 'aspect-[5/4]' : 'aspect-[4/4.7]')}>
+                  <CloudinaryImage
+                    publicId={product.images[0]}
+                    width={900}
+                    height={1100}
+                    alt={product.title}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    fetchPriority={index === 0 ? 'high' : 'auto'}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-108"
+                  />
                 </div>
-                <div className="shrink-0 text-right">
-                  <span
-                    className="inline-block rounded-full px-3 py-1.5 text-xs font-semibold"
-                    style={{
-                      background: 'linear-gradient(135deg, hsl(22 82% 50% / 0.12) 0%, hsl(28 90% 58% / 0.10) 100%)',
-                      border: '1px solid hsl(22 82% 50% / 0.25)',
-                      color: 'hsl(22 70% 40%)',
-                    }}
-                  >
-                    ${product.price}
-                  </span>
+
+                <div className="mt-4 flex items-start justify-between gap-3 px-2 pb-2">
+                  <div>
+                    <p className="text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+                      {product.style}
+                    </p>
+                    <h3 className="mt-2 font-serif text-[1.85rem] font-semibold leading-tight text-foreground">
+                      {product.title}
+                    </h3>
+                    <p className="mt-2.5 max-w-sm text-sm leading-[1.7] text-muted-foreground">
+                      {product.description}
+                    </p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <span
+                      className="inline-block rounded-full px-3 py-1.5 text-xs font-semibold"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(22 82% 50% / 0.12) 0%, hsl(28 90% 58% / 0.10) 100%)',
+                        border: '1px solid hsl(22 82% 50% / 0.25)',
+                        color: 'hsl(22 70% 40%)',
+                      }}
+                    >
+                      ${product.price}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </MotionLink>
+              </Link>
+            </motion.article>
           ))}
         </div>
       </section>
 
       {/* ── Studio Process ── */}
-      <section className="container deferred-section px-4 py-10 md:py-16">
+      <section className="container deferred-section px-2 py-10 md:px-3 md:py-16">
         <div className="surface-panel px-6 py-10 md:px-10 md:py-14">
           <Reveal>
             <div className="max-w-2xl">
@@ -441,7 +443,7 @@ const Index = () => {
       </section>
 
       {/* ── Sketchbook ── */}
-      <section className="container deferred-section px-4 py-16 md:py-20">
+      <section className="container deferred-section px-2 py-16 md:px-3 md:py-20">
         <Reveal>
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
@@ -482,7 +484,7 @@ const Index = () => {
       </section>
 
       {/* ── Testimonials ── */}
-      <section className="container deferred-section px-4 py-16 md:py-20">
+      <section className="container deferred-section px-2 py-16 md:px-3 md:py-20">
         <Reveal>
           <div className="text-center">
             <p className="section-kicker justify-center">Collector feedback</p>
@@ -537,7 +539,7 @@ const Index = () => {
       </section>
 
       {/* ── Newsletter ── */}
-      <section className="container deferred-section px-4 pb-10 pt-8 md:pb-14">
+      <section className="container deferred-section px-2 pb-10 pt-8 md:px-3 md:pb-14">
         <Reveal>
           <div
             className="surface-panel relative overflow-hidden px-6 py-10 md:grid md:grid-cols-[0.9fr_1.1fr] md:gap-10 md:px-10 md:py-12"
