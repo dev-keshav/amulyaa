@@ -1,4 +1,4 @@
-import { Suspense, lazy, type ReactNode } from "react";
+import { Suspense, lazy, type ReactNode, useEffect, useRef, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -29,6 +29,24 @@ const RouteFallback = () => <PageLoader />;
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+  const previousPathRef = useRef(location.pathname);
+  const [showNavigationLoader, setShowNavigationLoader] = useState(false);
+
+  useEffect(() => {
+    if (previousPathRef.current === location.pathname) {
+      return;
+    }
+
+    previousPathRef.current = location.pathname;
+    setShowNavigationLoader(true);
+
+    const timeoutId = window.setTimeout(() => {
+      setShowNavigationLoader(false);
+    }, 500);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [location.pathname]);
+
   const withTransition = (element: ReactNode) => (
     <PageTransition>
       <Suspense fallback={<RouteFallback />}>{element}</Suspense>
@@ -55,6 +73,9 @@ const AnimatedRoutes = () => {
           <Route path="/checkout/cancel" element={withTransition(<CheckoutCancel />)} />
           <Route path="*" element={withTransition(<NotFound />)} />
         </Routes>
+      </AnimatePresence>
+      <AnimatePresence>
+        {showNavigationLoader && <PageLoader key="navigation-loader" fullscreen label="Loading page" />}
       </AnimatePresence>
     </Layout>
   );
