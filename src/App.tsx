@@ -6,6 +6,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Layout from "@/components/layout/Layout";
+import PageLoader from "@/components/layout/PageLoader";
 import PageTransition from "./components/animation/PageTransition";
 
 const Index = lazy(() => import("./pages/Index"));
@@ -24,11 +25,7 @@ const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 const CheckoutCancel = lazy(() => import("./pages/CheckoutCancel"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-const RouteFallback = () => (
-  <div className="container px-2 pb-16 pt-10 md:px-3 md:pb-20 md:pt-14">
-    <div className="surface-panel h-[52vh] animate-pulse" />
-  </div>
-);
+const RouteFallback = () => <PageLoader />;
 
 const AnimatedRoutes = () => {
   const location = useLocation();
