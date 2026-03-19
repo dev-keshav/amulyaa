@@ -1,32 +1,45 @@
+import { Suspense, lazy, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Layout from "@/components/layout/Layout";
-import Index from "./pages/Index";
-import Shop from "./pages/Shop";
-import ProductDetail from "./pages/ProductDetail";
-import Cart from "./pages/Cart";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Careers from "./pages/Careers";
-import ShippingReturns from "./pages/ShippingReturns";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
-import Checkout from "./pages/Checkout";
-import CheckoutSuccess from "./pages/CheckoutSuccess";
-import CheckoutCancel from "./pages/CheckoutCancel";
-import NotFound from "./pages/NotFound";
 import PageTransition from "./components/animation/PageTransition";
+
+const Index = lazy(() => import("./pages/Index"));
+const Shop = lazy(() => import("./pages/Shop"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const Cart = lazy(() => import("./pages/Cart"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Careers = lazy(() => import("./pages/Careers"));
+const ShippingReturns = lazy(() => import("./pages/ShippingReturns"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
+const CheckoutCancel = lazy(() => import("./pages/CheckoutCancel"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+const RouteFallback = () => (
+  <div className="container px-4 pb-16 pt-10 md:pb-20 md:pt-14">
+    <div className="surface-panel h-[52vh] animate-pulse" />
+  </div>
+);
 
 const AnimatedRoutes = () => {
   const location = useLocation();
-  const withTransition = (element: JSX.Element) => <PageTransition>{element}</PageTransition>;
+  const withTransition = (element: ReactNode) => (
+    <PageTransition>
+      <Suspense fallback={<RouteFallback />}>{element}</Suspense>
+    </PageTransition>
+  );
 
   return (
     <Layout>
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={withTransition(<Index />)} />
           <Route path="/shop" element={withTransition(<Shop />)} />
@@ -49,13 +62,15 @@ const AnimatedRoutes = () => {
 };
 
 const App = () => (
-  <TooltipProvider>
-    <Toaster />
-    <Sonner />
-    <BrowserRouter>
-      <AnimatedRoutes />
-    </BrowserRouter>
-  </TooltipProvider>
+  <HelmetProvider>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <AnimatedRoutes />
+      </BrowserRouter>
+    </TooltipProvider>
+  </HelmetProvider>
 );
 
 export default App;

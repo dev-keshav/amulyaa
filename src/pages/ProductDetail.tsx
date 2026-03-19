@@ -10,6 +10,7 @@ import { buildCloudinaryUrl } from '@/lib/cloudinary';
 import { getProductBySlug, getRelatedProducts, products } from '@/data/products';
 import Reveal from '@/components/animation/Reveal';
 import PageHero from '@/components/layout/PageHero';
+import SEOMeta from '@/components/SEOMeta';
 
 const MotionLink = motion(Link);
 
@@ -66,146 +67,173 @@ const ProductDetail = () => {
 
   return (
     <>
-      <section className="container px-4 pb-12 pt-10 md:pt-12">
-        <div className="mb-8">
-          <Link
-            to="/shop"
-            className="info-chip hover:border-border hover:bg-background/90"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to collection
-          </Link>
-        </div>
+      <section className="container px-4 pb-16 pt-8">
+      <SEOMeta
+        title={`${product.title} — Original ${product.style} Painting`}
+        description={product.description ?? `${product.title} is an original ${product.style?.toLowerCase()} painting by Amulyaa. ${product.size} format, hand-painted and gallery-ready. Ships worldwide.`}
+        canonical={`/shop/${product.slug}`}
+        ogType="product"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: product.title,
+          description: product.description,
+          image: buildCloudinaryUrl(product.images?.[0] ?? '', { width: 1200, height: 1200 }),
+          brand: { '@type': 'Brand', name: 'Amulyaa' },
+          category: product.style,
+          offers: {
+            '@type': 'Offer',
+            price: product.price,
+            priceCurrency: 'USD',
+            availability: (product.stock ?? 0) > 0
+              ? 'https://schema.org/InStock'
+              : 'https://schema.org/SoldOut',
+            url: `https://www.amulyaa.art/shop/${product.slug}`,
+            seller: { '@type': 'Organization', name: 'Amulyaa' },
+          },
+        }}
+      />
+      <div className="mb-8">
+        <Link
+          to="/shop"
+          className="info-chip hover:border-border hover:bg-background/90"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to collection
+        </Link>
+      </div>
 
-        <div className="grid gap-8 xl:grid-cols-[1.04fr_0.96fr] xl:items-start">
-          <Reveal className="space-y-4">
-            <div className="surface-panel p-4">
-              <div className="aspect-square overflow-hidden rounded-[1.8rem]">
-                <CloudinaryImage
-                  publicId={images[selectedImage]}
-                  width={1400}
-                  height={1400}
-                  alt={product.title}
-                  className="h-full w-full object-cover"
-                  loading="eager"
-                />
-              </div>
+      <div className="grid gap-8 xl:grid-cols-[1.04fr_0.96fr] xl:items-start">
+        <Reveal className="space-y-4">
+          <div className="surface-panel p-4">
+            <div className="aspect-square overflow-hidden rounded-[1.8rem]">
+              <CloudinaryImage
+                publicId={images[selectedImage]}
+                width={1400}
+                height={1400}
+                alt={product.title}
+                className="h-full w-full object-cover"
+                loading="eager"
+                fetchPriority="high"
+                sizes="(max-width: 1280px) 100vw, 52vw"
+              />
+            </div>
+          </div>
+
+          {images.length > 1 && (
+            <div className="grid grid-cols-4 gap-3">
+              {images.map((image, index) => (
+                <motion.button
+                  key={image}
+                  onClick={() => setSelectedImage(index)}
+                  className={`surface-panel p-2 ${index === selectedImage ? 'ring-2 ring-accent ring-offset-2 ring-offset-background' : ''
+                    }`}
+                  whileHover={{ translateY: -3 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="aspect-square overflow-hidden rounded-[1.2rem]">
+                    <CloudinaryImage
+                      publicId={image}
+                      width={240}
+                      height={240}
+                      alt=""
+                      sizes="(max-width: 1280px) 20vw, 10vw"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+          )}
+        </Reveal>
+
+        <Reveal delay={0.08} className="xl:sticky xl:top-28">
+          <div className="surface-panel p-8">
+            <div className="flex flex-wrap gap-2">
+              <span className="info-chip">{product.style}</span>
+              <span className="info-chip">{product.size}</span>
+              <span className="info-chip">{inStock ? `${availableStock} available` : 'Sold out'}</span>
             </div>
 
-            {images.length > 1 && (
-              <div className="grid grid-cols-4 gap-3">
-                {images.map((image, index) => (
-                  <motion.button
-                    key={image}
-                    onClick={() => setSelectedImage(index)}
-                    className={`surface-panel p-2 ${
-                      index === selectedImage ? 'ring-2 ring-accent ring-offset-2 ring-offset-background' : ''
-                    }`}
-                    whileHover={{ translateY: -3 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <div className="aspect-square overflow-hidden rounded-[1.2rem]">
-                      <CloudinaryImage
-                        publicId={image}
-                        width={240}
-                        height={240}
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  </motion.button>
-                ))}
-              </div>
-            )}
-          </Reveal>
+            <h1 className="mt-6 font-serif text-5xl text-foreground md:text-6xl">{product.title}</h1>
+            <p className="mt-4 text-2xl font-semibold text-foreground">${product.price}</p>
+            <p className="mt-6 text-base leading-8 text-muted-foreground">{product.description}</p>
 
-          <Reveal delay={0.08} className="xl:sticky xl:top-28">
-            <div className="surface-panel p-8">
-              <div className="flex flex-wrap gap-2">
-                <span className="info-chip">{product.style}</span>
-                <span className="info-chip">{product.size}</span>
-                <span className="info-chip">{inStock ? `${availableStock} available` : 'Sold out'}</span>
-              </div>
-
-              <h1 className="mt-6 font-serif text-5xl text-foreground md:text-6xl">{product.title}</h1>
-              <p className="mt-4 text-2xl font-semibold text-foreground">${product.price}</p>
-              <p className="mt-6 text-base leading-8 text-muted-foreground">{product.description}</p>
-
-              <div className="surface-panel-muted mt-8 grid gap-4 p-5 sm:grid-cols-2">
-                {product.materials && (
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Materials</p>
-                    <p className="mt-2 text-sm text-foreground">{product.materials}</p>
-                  </div>
-                )}
-                {product.dimensions && (
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Dimensions</p>
-                    <p className="mt-2 text-sm text-foreground">{product.dimensions}</p>
-                  </div>
-                )}
+            <div className="surface-panel-muted mt-8 grid gap-4 p-5 sm:grid-cols-2">
+              {product.materials && (
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Availability</p>
-                  <p className="mt-2 text-sm text-foreground">
-                    {inStock ? `Ready to ship in 3-5 business days` : 'Currently archived'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Framing</p>
-                  <p className="mt-2 text-sm text-foreground">Finished and prepared for display.</p>
-                </div>
-              </div>
-
-              {inStock && (
-                <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-                  <div className="surface-panel-muted flex items-center justify-between gap-4 px-4 py-3">
-                    <button
-                      type="button"
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="rounded-full p-2 text-foreground transition-colors hover:bg-background/80"
-                    >
-                      <Minus className="h-4 w-4" />
-                    </button>
-                    <span className="min-w-8 text-center text-sm font-semibold text-foreground">{quantity}</span>
-                    <button
-                      type="button"
-                      onClick={() => setQuantity(Math.min(availableStock, quantity + 1))}
-                      className="rounded-full p-2 text-foreground transition-colors hover:bg-background/80"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </button>
-                  </div>
-
-                  <Button
-                    onClick={handleAddToCart}
-                    className="flex-1 bg-accent text-accent-foreground hover:bg-accent/92"
-                  >
-                    Add to cart
-                  </Button>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Materials</p>
+                  <p className="mt-2 text-sm text-foreground">{product.materials}</p>
                 </div>
               )}
-
-              <div className="surface-panel-muted mt-8 p-5">
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-full bg-accent/12">
-                    <Truck className="h-4 w-4 text-accent" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">Shipping and care</p>
-                    <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                      Free shipping on orders over $500. Pieces are professionally packed and insured for transit.
-                    </p>
-                  </div>
+              {product.dimensions && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Dimensions</p>
+                  <p className="mt-2 text-sm text-foreground">{product.dimensions}</p>
                 </div>
+              )}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Availability</p>
+                <p className="mt-2 text-sm text-foreground">
+                  {inStock ? `Ready to ship in 3-5 business days` : 'Currently archived'}
+                </p>
               </div>
-
-              <div className="mt-6 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                <Sparkles className="h-4 w-4 text-accent" />
-                Original only. No prints or reproductions.
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Framing</p>
+                <p className="mt-2 text-sm text-foreground">Finished and prepared for display.</p>
               </div>
             </div>
-          </Reveal>
-        </div>
+
+            {inStock && (
+              <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+                <div className="surface-panel-muted flex items-center justify-between gap-4 px-4 py-3">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="rounded-full p-2 text-foreground transition-colors hover:bg-background/80"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  <span className="min-w-8 text-center text-sm font-semibold text-foreground">{quantity}</span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(Math.min(availableStock, quantity + 1))}
+                    className="rounded-full p-2 text-foreground transition-colors hover:bg-background/80"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+
+                <Button
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-accent text-accent-foreground hover:bg-accent/92"
+                >
+                  Add to cart
+                </Button>
+              </div>
+            )}
+
+            <div className="surface-panel-muted mt-8 p-5">
+              <div className="flex items-start gap-3">
+                <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-full bg-accent/12">
+                  <Truck className="h-4 w-4 text-accent" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Shipping and care</p>
+                  <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                    Free shipping on orders over $500. Pieces are professionally packed and insured for transit.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              <Sparkles className="h-4 w-4 text-accent" />
+              Original only. No prints or reproductions.
+            </div>
+          </div>
+        </Reveal>
+      </div>
       </section>
 
       {related.length > 0 && (
@@ -240,6 +268,7 @@ const ProductDetail = () => {
                     width={800}
                     height={1000}
                     alt={item.title}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
