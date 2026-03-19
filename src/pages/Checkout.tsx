@@ -87,7 +87,7 @@ const Checkout = () => {
         ]}
       />
 
-      <section className="container px-4 pb-16">
+      <section className="container px-2 pb-16 md:px-3">
         <div className="grid gap-8 xl:grid-cols-[1.04fr_0.96fr] xl:items-start">
           <Reveal>
             <div className="surface-panel p-6 md:p-8">

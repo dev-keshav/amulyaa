@@ -11,8 +11,7 @@ import { getProductBySlug, getRelatedProducts, products } from '@/data/products'
 import Reveal from '@/components/animation/Reveal';
 import PageHero from '@/components/layout/PageHero';
 import SEOMeta from '@/components/SEOMeta';
-
-const MotionLink = motion(Link);
+import ProductCardActions from '@/components/shop/ProductCardActions';
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -67,7 +66,7 @@ const ProductDetail = () => {
 
   return (
     <>
-      <section className="container px-4 pb-16 pt-8">
+      <section className="container px-2 pb-16 pt-8 md:px-3">
       <SEOMeta
         title={`${product.title} — Original ${product.style} Painting`}
         description={product.description ?? `${product.title} is an original ${product.style?.toLowerCase()} painting by Amulyaa. ${product.size} format, hand-painted and gallery-ready. Ships worldwide.`}
@@ -237,7 +236,7 @@ const ProductDetail = () => {
       </section>
 
       {related.length > 0 && (
-        <section className="container px-4 pb-16 pt-8">
+        <section className="container px-2 pb-16 pt-8 md:px-3">
           <Reveal>
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
@@ -252,34 +251,37 @@ const ProductDetail = () => {
 
           <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {related.map((item, index) => (
-              <MotionLink
+              <motion.article
                 key={item.id}
-                to={`/shop/${item.slug}`}
-                className="surface-panel group block p-3"
+                className="surface-panel group relative block p-3"
                 initial={{ opacity: 0, y: 32 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 whileHover={{ translateY: -6 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.4, delay: index * 0.04 }}
               >
-                <div className="aspect-[4/5] overflow-hidden rounded-[1.6rem]">
-                  <CloudinaryImage
-                    publicId={item.images[0]}
-                    width={800}
-                    height={1000}
-                    alt={item.title}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                </div>
-                <div className="px-2 pb-2 pt-5">
-                  <p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                    {item.style}
-                  </p>
-                  <h3 className="mt-3 font-serif text-3xl text-foreground">{item.title}</h3>
-                  <p className="mt-3 text-sm text-foreground">${item.price}</p>
-                </div>
-              </MotionLink>
+                <ProductCardActions product={item} />
+
+                <Link to={`/shop/${item.slug}`} className="block">
+                  <div className="aspect-[4/5] overflow-hidden rounded-[1.6rem]">
+                    <CloudinaryImage
+                      publicId={item.images[0]}
+                      width={800}
+                      height={1000}
+                      alt={item.title}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="px-2 pb-2 pt-5">
+                    <p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                      {item.style}
+                    </p>
+                    <h3 className="mt-3 font-serif text-3xl text-foreground">{item.title}</h3>
+                    <p className="mt-3 text-sm text-foreground">${item.price}</p>
+                  </div>
+                </Link>
+              </motion.article>
             ))}
           </div>
         </section>

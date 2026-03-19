@@ -10,7 +10,7 @@ const ShippingReturns = () => (
       description="How Amulyaa handles packing, delivery timing, and return requests for original works."
     />
 
-    <section className="container px-4 pb-16">
+    <section className="container px-2 pb-16 md:px-3">
       <div className="grid gap-6 md:grid-cols-3">
         <div className="surface-panel-muted p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Standard</p>

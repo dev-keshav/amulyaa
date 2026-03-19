@@ -22,7 +22,7 @@ const CheckoutSuccess = () => {
         )}
       />
 
-      <section className="container px-4 pb-16">
+      <section className="container px-2 pb-16 md:px-3">
         <div className="mx-auto max-w-xl surface-panel p-8 text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent/12">
             <CheckCircle2 className="h-8 w-8 text-accent" />

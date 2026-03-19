@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 const Footer = () => (
-  <footer className="mt-24 px-4 pb-8 pt-4">
+  <footer className="mt-24 px-2 pb-8 pt-4 md:px-3">
     <div className="container">
       <div
         className="relative overflow-hidden rounded-[2rem] px-6 py-10 md:px-10 md:py-12"
@@ -128,6 +128,7 @@ const Footer = () => (
                 heading: 'Shop',
                 links: [
                   { to: '/shop', label: 'All paintings' },
+                  { to: '/favorites', label: 'Favorites' },
                   { to: '/shop?style=abstract', label: 'Abstract' },
                   { to: '/shop?style=landscape', label: 'Landscape' },
                   { to: '/shop?style=portrait', label: 'Portrait' },
