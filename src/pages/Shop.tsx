@@ -1,20 +1,19 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Search, SlidersHorizontal, Sparkles } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import CloudinaryImage from '@/components/media/CloudinaryImage';
 import Reveal from '@/components/animation/Reveal';
 import PageHero from '@/components/layout/PageHero';
+import ShopCartPanel from '@/components/cart/ShopCartPanel';
+import ShopProductCard from '@/components/shop/ShopProductCard';
 import { products } from '@/data/products';
 import SEOMeta from '@/components/SEOMeta';
-
-const MotionLink = motion(Link);
+import { useCartStore } from '@/stores/cartStore';
 
 const styles = ['All', 'Abstract', 'Landscape', 'Portrait', 'Still Life', 'Modern'];
 const sizes = ['All', 'Small', 'Medium', 'Large'];
@@ -35,6 +34,7 @@ const Shop = () => {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sort, setSort] = useState('newest');
+  const hasCartItems = useCartStore((state) => state.items.length > 0);
 
   useEffect(() => {
     const nextStyle = normalizeStyle(searchParams.get('style'));
@@ -158,8 +158,14 @@ const Shop = () => {
         )}
       />
 
-      <section className="container px-4 pb-14">
-        <div className="grid gap-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start">
+      <section className="container px-2 pb-14 md:px-3">
+        <div
+          className={`grid gap-8 lg:items-start ${
+            hasCartItems
+              ? 'lg:grid-cols-[18rem_minmax(0,1fr)] xl:grid-cols-[18rem_minmax(0,1fr)_22rem]'
+              : 'lg:grid-cols-[18rem_minmax(0,1fr)]'
+          }`}
+        >
           <Reveal className="lg:sticky lg:top-28">
             <aside className="surface-panel p-6">
               <div className="flex items-center justify-between gap-3">
@@ -300,64 +306,23 @@ const Shop = () => {
                 </Button>
               </div>
             ) : (
-              <div className="mt-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              <div
+                className={`mt-8 grid gap-6 sm:grid-cols-2 ${
+                  hasCartItems ? '2xl:grid-cols-3' : 'xl:grid-cols-3'
+                }`}
+              >
                 {filtered.map((product, index) => (
-                  <MotionLink
-                    key={product.id}
-                    to={`/shop/${product.slug}`}
-                    className="surface-panel card-hover group block p-3"
-                    initial={{ opacity: 0, y: 36 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.4, delay: index * 0.04 }}
-                  >
-                    <div className="aspect-[4/5] overflow-hidden rounded-[1.6rem]">
-                      <CloudinaryImage
-                        publicId={product.images[0]}
-                        width={800}
-                        height={1000}
-                        alt={product.title}
-                        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    </div>
-
-                    <div className="px-2 pb-2 pt-5">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="info-chip text-xs">{product.style}</span>
-                        <span className="info-chip text-xs">{product.size}</span>
-                      </div>
-                      <h3 className="mt-4 font-serif text-3xl font-semibold text-foreground leading-tight">{product.title}</h3>
-                      <p className="mt-3 text-sm leading-[1.75] text-muted-foreground">
-                        {product.description}
-                      </p>
-                      <div className="mt-5 flex items-center justify-between gap-4">
-                        <span
-                          className="inline-block rounded-full px-4 py-1.5 text-sm font-semibold"
-                          style={{
-                            background: 'linear-gradient(135deg, hsl(22 82% 50% / 0.12) 0%, hsl(28 90% 58% / 0.09) 100%)',
-                            border: '1px solid hsl(22 82% 50% / 0.22)',
-                            color: 'hsl(22 68% 36%)',
-                          }}
-                        >
-                          ${product.price}
-                        </span>
-                        {product.stock > 0 ? (
-                          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                            {product.stock} available
-                          </span>
-                        ) : (
-                          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-destructive">
-                            Sold out
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </MotionLink>
+                  <ShopProductCard key={product.id} product={product} index={index} />
                 ))}
               </div>
             )}
           </div>
+
+          {hasCartItems && (
+            <Reveal delay={0.12} className="lg:col-span-2 xl:col-span-1 xl:sticky xl:top-28">
+              <ShopCartPanel />
+            </Reveal>
+          )}
         </div>
       </section>
     </>

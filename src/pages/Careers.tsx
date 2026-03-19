@@ -49,7 +49,7 @@ const Careers = () => {
         ]}
       />
 
-      <section className="container px-4 pb-16">
+      <section className="container px-2 pb-16 md:px-3">
         {!jobs.length ? (
           <div className="surface-panel px-6 py-16 text-center">
             <p className="font-serif text-4xl text-foreground">No open roles right now.</p>

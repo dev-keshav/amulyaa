@@ -40,7 +40,7 @@ const About = () => (
       )}
     />
 
-    <section className="container px-4 pb-16">
+    <section className="container px-2 pb-16 md:px-3">
       <Reveal>
         <div className="surface-panel px-6 py-8 md:px-10 md:py-10">
           <div className="max-w-3xl content-rich">

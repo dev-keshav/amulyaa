@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, ShoppingBag, X } from 'lucide-react';
+import { Heart, Menu, ShoppingBag, X } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
+import { useFavoritesStore } from '@/stores/favoritesStore';
 import { Button } from '@/components/ui/button';
 import { NavLink } from '@/components/NavLink';
 import AmulyaaLogo from '@/components/AmulyaaLogo';
@@ -17,6 +18,13 @@ const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const totalItems = useCartStore((s) => s.totalItems());
+  const totalFavorites = useFavoritesStore((s) => s.totalItems());
+  const actionPillStyle = {
+    border: '1px solid rgba(255,255,255,0.12)',
+    background: 'rgba(255,255,255,0.08)',
+    color: 'hsl(36 38% 94%)',
+    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12)',
+  };
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 16);
@@ -25,7 +33,7 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 px-4 pt-4 md:pt-5">
+    <header className="sticky top-0 z-50 px-2 pt-4 md:px-3 md:pt-5">
       {/* Thin accent gradient top bar */}
       <div
         className="absolute inset-x-0 top-0 h-[2px] z-10"
@@ -102,17 +110,35 @@ const Header = () => {
               </div>
             </div>
 
-            {/* Cart */}
+            <Link
+              to="/favorites"
+              className="group flex items-center gap-3 rounded-full px-4 py-2.5 text-sm font-semibold backdrop-blur-md transition-all hover:bg-white/18"
+              style={{
+                ...actionPillStyle,
+                opacity: totalFavorites > 0 ? 1 : 0.55,
+              }}
+              aria-label={`Favorites with ${totalFavorites} saved items`}
+            >
+              <Heart className={`h-4 w-4 transition-transform group-hover:-translate-y-0.5 ${totalFavorites > 0 ? 'fill-current text-accent' : ''}`} />
+              <span className="hidden sm:inline">Favorites</span>
+              {totalFavorites > 0 && (
+                <span
+                  className="inline-flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-xs font-bold"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(22 82% 50%) 0%, hsl(28 90% 58%) 100%)',
+                    color: 'hsl(36 38% 97%)',
+                    boxShadow: '0 4px 12px -4px hsl(22 82% 50% / 0.7)',
+                  }}
+                >
+                  {totalFavorites}
+                </span>
+              )}
+            </Link>
+
             <Link
               to="/cart"
               className="group flex items-center gap-3 rounded-full px-4 py-2.5 text-sm font-semibold backdrop-blur-md transition-all hover:bg-white/18"
-              style={{
-                border: '1px solid rgba(255,255,255,0.12)',
-                background: 'rgba(255,255,255,0.08)',
-                color: 'hsl(36 38% 94%)',
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12)',
-                opacity: totalItems > 0 ? 1 : 0.55,
-              }}
+              style={{ ...actionPillStyle, opacity: totalItems > 0 ? 1 : 0.55 }}
               aria-label={`Cart with ${totalItems} items`}
             >
               <ShoppingBag className="h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
@@ -189,6 +215,25 @@ const Header = () => {
                 </li>
               ))}
             </ul>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              <Link
+                to="/favorites"
+                className="rounded-[1.2rem] px-4 py-3 text-base font-semibold transition-all"
+                style={{ border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.06)', color: 'rgba(240,220,200,0.82)' }}
+                onClick={() => setMobileOpen(false)}
+              >
+                Favorites {totalFavorites > 0 ? `(${totalFavorites})` : ''}
+              </Link>
+              <Link
+                to="/cart"
+                className="rounded-[1.2rem] px-4 py-3 text-base font-semibold transition-all"
+                style={{ border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.06)', color: 'rgba(240,220,200,0.82)' }}
+                onClick={() => setMobileOpen(false)}
+              >
+                Cart {totalItems > 0 ? `(${totalItems})` : ''}
+              </Link>
+            </div>
           </div>
         </div>
       )}
